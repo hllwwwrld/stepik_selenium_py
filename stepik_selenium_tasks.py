@@ -6,6 +6,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 import time
 import os
+import unittest
 
 
 # ===========================================
@@ -50,7 +51,7 @@ def work_with_browser():
 
 # =========================================
 # Для закрытия браузера в конце программы, даже если в течении программы возникла ошибка можно использовать конструкции:
-def test_open_browser():
+def open_browser():
     with webdriver.Chrome(service=Service(ChromeDriverManager().install())) as browser:
         browser.get('https://google.com')
 
@@ -119,7 +120,7 @@ def step_1_6_5():
 from selenium.webdriver.common.keys import Keys
 
 
-def test_press_enter_without_click():
+def press_enter_without_click():
     with webdriver.Chrome(service=Service(ChromeDriverManager().install())) as browser:
         browser.get("https://google.com")
         input_form = browser.find_element(By.CSS_SELECTOR, "input.gLFyf")
@@ -581,4 +582,65 @@ def step_2_4_8():
 
 
 # step_2_4_8()
+# =====================================================
+
+
+# =====================================================
+# Классы? пока вообще не понятно, как и зачем применять
+#3.1 шаг 1/2/3
+class TestAbs(unittest.TestCase):
+
+    def test_1_6_10_1(self):
+        with webdriver.Chrome(service=Service(ChromeDriverManager().install())) as browser:
+            browser.get('http://suninjuly.github.io/registration1.html')
+
+            select_values = {1: 'first', 2: 'second', 3: 'third'}
+            required_values = ['Arseniy', 'Kosolapov', 'hllwwrld@gmail.com']
+
+            required_forms = [browser.find_element(By.CSS_SELECTOR, f'.first_block input.form-control.{select_values[i]}')
+                              for i in range(1, 4)]
+            for i in range(len(required_forms)):
+                required_forms[i].send_keys(required_values[i])
+
+            time.sleep(3)
+
+            button = browser.find_element(By.CSS_SELECTOR, "button.btn")
+            button.click()
+
+            time.sleep(1)
+
+            welcome_text_elt = browser.find_element(By.TAG_NAME, "h1")
+            welcome_text = welcome_text_elt.text
+
+            # с помощью assert проверяем, что ожидаемый текст совпадает с текстом на странице сайта
+            self.assertEqual("Congratulations! You have successfully registered!", welcome_text, 'попа')
+
+    def test_1_6_10_2(self):
+        with webdriver.Chrome(service=Service(ChromeDriverManager().install())) as browser:
+            browser.get('http://suninjuly.github.io/registration2.html')
+
+            select_values = {1: 'first', 2: 'second', 3: 'third'}
+            required_values = ['Arseniy', 'Kosolapov', 'hllwwrld@gmail.com']
+
+            required_forms = [browser.find_element(By.CSS_SELECTOR, f'.first_block input.form-control.{select_values[i]}')
+                              for i in range(1, 4)]
+            for i in range(len(required_forms)):
+                required_forms[i].send_keys(required_values[i])
+
+            time.sleep(3)
+
+            button = browser.find_element(By.CSS_SELECTOR, "button.btn")
+            button.click()
+
+            time.sleep(1)
+
+            welcome_text_elt = browser.find_element(By.TAG_NAME, "h1")
+            welcome_text = welcome_text_elt.text
+
+            # с помощью assert проверяем, что ожидаемый текст совпадает с текстом на странице сайта
+            self.assertEqual("Congratulations! You have successfully registered!", welcome_text, 'попа')
+
+
+if __name__ == "__main__":
+    unittest.main()
 # =====================================================
