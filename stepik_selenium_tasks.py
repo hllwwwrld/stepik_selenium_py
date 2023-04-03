@@ -4,9 +4,11 @@ from webdriver_manager.chrome import ChromeDriverManager
 # импортируем класс By, который позволяет выбрать способ поиска элемента
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
+from conftest import stepik_auth
 import time
 import os
 import unittest
+import pytest
 
 
 # ===========================================
@@ -558,7 +560,7 @@ def step_2_4_8():
         browser.get("http://suninjuly.github.io/explicit_wait2.html")
         browser.implicitly_wait(5)  # устанавливаю время ожидания появления элементов - 5 сек
 
-        # жду, пока цена дома не станет равной 100 через ожидание текста в элемента и время ожидания <= 30 сек
+        # жду, пока цена дома не станет равной 100 через ожидание текста элемента и время ожидания <= 30 сек
         WebDriverWait(browser, 30).until(EC.text_to_be_present_in_element((By.CSS_SELECTOR, '#price'), '$100'))
 
         # нахожу кнопу для подтвреждения покупки по выбранной цене
@@ -587,7 +589,7 @@ def step_2_4_8():
 
 # =====================================================
 # Классы? пока вообще не понятно, как и зачем применять
-#3.1 шаг 1/2/3
+# 3.1 шаг 1/2/3
 class TestAbs(unittest.TestCase):
 
     def test_1_6_10_1(self):
@@ -644,3 +646,91 @@ class TestAbs(unittest.TestCase):
 if __name__ == "__main__":
     unittest.main()
 # =====================================================
+
+
+
+
+
+# =====================================================================================================================
+# PYTEST
+
+
+class TestMainPage1:
+    # вызываем фикстуру в тесте, передав ее как параметр
+    def test_guest_should_see_login_link(self, browser):
+        browser.get('http://selenium1py.pythonanywhere.com/')
+        browser.find_element(By.CSS_SELECTOR, "#login_link")
+
+    def test_guest_should_see_basket_link_on_the_main_page(self, browser):
+        browser.get('http://selenium1py.pythonanywhere.com/')
+        browser.find_element(By.CSS_SELECTOR, ".basket-mini .btn-group > a")
+
+
+# на этом тесте фикстура, у которой стоит scope=function и autouse=true (browser1) запуститься сама
+def test_temp():
+    assert 1 == 1
+
+
+# указана марка для теста, при запуске
+@pytest.mark.temp
+def test_temp():
+    assert 1 == 1
+
+
+@pytest.mark.temp
+@pytest.mark.xfail  # xfail - марка, помечающая тесты, от которых ожидается падение (ожидаемо падают)
+def test_temp():
+    assert 1 == 1
+
+
+@pytest.mark.test_fixture
+@pytest.mark.xfail(strict=True)  # параметр sctict=True = помечает ожидаемо падающий тест, как failed, если он неожиданно проходит
+def test_succeed():
+    assert True
+
+
+@pytest.mark.test_fixture
+@pytest.mark.skip  # skip - марка, помечающая тесты, которые должны быть пропущены
+def test_skipped():
+    assert False
+
+
+@pytest.mark.test_param_1
+# parametrize - марка, позволяющая запустить тест несколько раз с разными параметрами
+# первый параметр - название параметра, который будет принимать значения из списка переданного в параметре 2.
+# тест запускается с каждым значением из переданного списка
+# параметризацию можно так-же задавать и для целого класса
+@pytest.mark.parametrize('value_to_compare', [1, 2])
+def test_params(value_to_compare):  # указанная в марке parametrize переменная
+    assert value_to_compare == 1
+
+
+class TestParametrize:
+    lesson_numbers = ['236895', '236896', '236897', '236898', '236899', '236903', '236904', '236905']
+
+    @pytest.mark.parametrize('lesson_num', lesson_numbers)
+    def test_auth_submit_answer(self, browser, lesson_num):
+        browser.get(f'https://stepik.org/lesson/{lesson_num}/step/1')
+
+        browser.implicitly_wait(10)
+
+        stepik_auth(browser)
+
+        time.sleep(10)
+
+        assert WebDriverWait(browser, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, '.textarea')))
+        answer_input_form = browser.find_element(By.CSS_SELECTOR, '.textarea')
+
+        answer = str(math.log(int(time.time() + 0.2)))
+        answer_input_form.send_keys(answer)
+
+        assert WebDriverWait(browser, 1).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.submit-submission')))
+        submit_button = browser.find_element(By.CSS_SELECTOR, '.submit-submission')
+        submit_button.click()
+
+        feedback_shown = WebDriverWait(browser, 10).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.smart-hints__hint')))
+
+        if feedback_shown:
+            feedback = browser.find_element(By.CSS_SELECTOR, '.smart-hints__hint')
+            if feedback.text != 'Correct!':
+                print(feedback.text)
