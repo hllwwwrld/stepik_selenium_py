@@ -734,3 +734,7 @@ class TestParametrize:
             feedback = browser.find_element(By.CSS_SELECTOR, '.smart-hints__hint')
             if feedback.text != 'Correct!':
                 print(feedback.text)
+
+
+def test_open_mozilla(browser_mozilla):
+    browser_mozilla.get('https://stepik.org/lesson/237240/step/6?unit=209628')

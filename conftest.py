@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.firefox import GeckoDriverManager
 from selenium.webdriver.common.by import By
 import pytest
 
@@ -31,14 +32,25 @@ def browser1():
 # все, что после - teardown (выполнится ПОСЛЕ периода указанного в scope)
 
 # то есть при scope=function будет выполняться указанный setup и teardown для каждой функции
-@pytest.fixture()
-def browser():
+@pytest.fixture
+def browser_сhrome():
     # это выполнится перед указанном в scope периоде
-    print("\nstart browser for test...")
+    print("\nStart chrome browser for test...")
     browser = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
     yield browser  # статья на хабри про yield https://habr.com/ru/post/132554/
     # этот код выполнится после завершения указанного периода в scope
-    print("\nquit browser..")
+    print("\nquit chrome browser..")
+    browser.quit()
+
+
+@pytest.fixture()
+def browser_mozilla():
+    # это выполнится перед указанном в scope периоде
+    print("\nStart mozilla browser for test...")
+    browser = webdriver.Firefox(service=Service(GeckoDriverManager().install()))
+    yield browser  # статья на хабри про yield https://habr.com/ru/post/132554/
+    # этот код выполнится после завершения указанного периода в scope
+    print("\nquit mozilla browser..")
     browser.quit()
 
 
