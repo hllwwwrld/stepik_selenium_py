@@ -736,5 +736,8 @@ class TestParametrize:
                 print(feedback.text)
 
 
-def test_open_mozilla(browser_mozilla):
-    browser_mozilla.get('https://stepik.org/lesson/237240/step/6?unit=209628')
+# открытие браузера mozilla (запустить pytest с параметром --browser_name='mozilla')
+def test_open_mozilla(browser):
+    browser.get('https://google.com')
+
+    time.sleep(3)
