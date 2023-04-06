@@ -16,9 +16,9 @@ import pytest
 # создание функции для того, чтобы принимать опцию --browser_name в консоли
 def pytest_addoption(parser):
     parser.addoption('--browser_name', action='store', default=None,
-                     help='Choose browser: chrome or mozilla')
+                     help='Choose browser: chrome or mozilla (default chrome)')
     parser.addoption('--language', action='store', default='en',
-                     help='Choose language: en/ru')
+                     help='Choose language: en(gb)/ru/ko... (default en)')
 
 
 # пример фикстуры
