@@ -4,6 +4,8 @@ from webdriver_manager.chrome import ChromeDriverManager
 # импортируем класс By, который позволяет выбрать способ поиска элемента
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from conftest import stepik_auth
 import time
 import os
@@ -524,9 +526,6 @@ def step_2_4_5():
 # step_2_4_5()
 # =====================================================
 # Явные ожидания explicit waits:
-
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 
 
 def step_2_4_7():

@@ -65,6 +65,7 @@ def browser(request):
     else:
         options_chrome = chromeOptions()
         options_chrome.add_experimental_option('prefs', {'intl.accept_languages': language})
+        print(f'\nChosen browser not available. Available browser names: mozilla/chrome')
         print(f"\nStart chrome browser for test BY DEFAULT with language {language}...")
         browser = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options_chrome)
 
